@@ -16,6 +16,7 @@ UserInteractor::UserInteractor()
 
 int UserInteractor::run()
 {
+    std::cout << "Usage: enter \"funcs\" to choose function to display. Enter \"q\" to exit." << std::endl;
     std::string in;
     while (std::getline(std::cin, in)) {
         if (in == "funcs") {
