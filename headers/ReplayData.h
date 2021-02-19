@@ -3,6 +3,7 @@
 #include "Function.h"
 #include "Misc.h"
 
+#include <cassert>
 #include <cstdint>
 #include <iterator>
 #include <iostream>
@@ -13,11 +14,12 @@ namespace min1d {
 
 enum struct VdDataKind
 {
-    VdPointKind, VdFunctionKind,
+    VdPointKind, VdFunctionKind, VdSegmentKind,
 };
 
 struct VdPoint;
 struct VdFunction;
+struct VdSegment;
 
 struct VersionedData
 {
@@ -33,6 +35,8 @@ struct VersionedData
         switch (get_kind()) {
             M(VdPoint);
             M(VdFunction);
+            M(VdSegment);
+            default: assert(false, "There is no such VersionedData kind");
         }
 
         #undef M
@@ -44,6 +48,7 @@ private:
     uint m_version;
 };
 
+// Do we really need this?
 struct VdPoint : VersionedData
 {
     VdDataKind get_kind() const noexcept override
@@ -62,6 +67,14 @@ struct VdFunction : VersionedData
     { return VdDataKind::VdFunctionKind; }
 private:
     CalculateFunc m_func;
+};
+
+struct VdSegment : VersionedData
+{
+    VdDataKind get_kind() const noexcept override
+    { return VdDataKind::VdSegmentKind; }
+private:
+    double l, r;
 };
 
 struct ReplayData

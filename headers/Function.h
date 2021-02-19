@@ -15,6 +15,9 @@ public:
 
     void reset(std::string as_string, CalculateFunc calculate);
 
+    /*
+     * Calculate function's value in point x
+     */ 
     double operator () (double x) const;
 
     const std::string & to_string() const noexcept;
