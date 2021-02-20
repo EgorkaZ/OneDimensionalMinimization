@@ -65,7 +65,7 @@ struct VdFunction : VersionedData
 
     VdDataKind get_kind() const noexcept override
     { return VdDataKind::VdFunctionKind; }
-private:
+
     CalculateFunc m_func;
 };
 
@@ -73,7 +73,7 @@ struct VdSegment : VersionedData
 {
     VdDataKind get_kind() const noexcept override
     { return VdDataKind::VdSegmentKind; }
-private:
+
     double l, r;
 };
 
