@@ -16,11 +16,6 @@ void Function::reset(std::string as_string, CalculateFunc calculate)
     m_calculate = std::move(calculate);
 }
 
-double Function::operator () (double x) const
-{ return m_calculate(x); }
-
-const std::string & Function::to_string() const noexcept
-{ return m_as_string; }
 
 std::ostream & operator << (std::ostream & out, const Function & func)
 { return out << func.to_string() << " [" << func.m_bounds.from << ", " << func.m_bounds.to << ']'; }

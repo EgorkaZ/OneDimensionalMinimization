@@ -2,84 +2,14 @@
 
 #include "Function.h"
 #include "Misc.h"
+#include "VersionedData.h"
 
-#include <cassert>
 #include <cstdint>
 #include <iterator>
-#include <iostream>
 #include <memory>
 #include <type_traits>
 
 namespace min1d {
-
-enum struct VdDataKind
-{
-    VdPointKind, VdFunctionKind, VdSegmentKind,
-};
-
-struct VdPoint;
-struct VdFunction;
-struct VdSegment;
-
-struct VersionedData
-{
-    virtual ~VersionedData() = default;
-
-    virtual VdDataKind get_kind() const noexcept = 0;
-
-    template <class Func>
-    auto call_func(Func && func)
-    {
-        #define M(type) case VdDataKind::type ## Kind: return func(reinterpret_cast<type &>(*this))
-
-        switch (get_kind()) {
-            M(VdPoint);
-            M(VdFunction);
-            M(VdSegment);
-            default: assert(false, "There is no such VersionedData kind");
-        }
-
-        #undef M
-    }
-
-    uint version() const noexcept
-    { return m_version; }
-private:
-    uint m_version;
-};
-
-// Do we really need this?
-struct VdPoint : VersionedData
-{
-    VdDataKind get_kind() const noexcept override
-    { return VdDataKind::VdPointKind; }
-
-    double x, y;
-};
-
-struct VdFunction : VersionedData
-{
-    VdFunction(CalculateFunc func)
-        : m_func(std::move(func))
-    {}
-
-    VdDataKind get_kind() const noexcept override
-    { return VdDataKind::VdFunctionKind; }
-
-    double operator () (double x) const noexcept
-    { return m_func(x); }
-
-private:
-    CalculateFunc m_func;
-};
-
-struct VdSegment : VersionedData
-{
-    VdDataKind get_kind() const noexcept override
-    { return VdDataKind::VdSegmentKind; }
-
-    double l, r;
-};
 
 struct ReplayData
 {
@@ -130,6 +60,14 @@ public:
         m_data.emplace_back(std::make_unique<const ValueType>(std::forward<VdData>(vd_data)));
         m_total_versions = std::max(m_total_versions, vd_data.version());
     }
+
+
+    template <class VdDataType, class... Args>
+    void emplace_back(Args && ... args)
+    { m_data.emplace_back(std::make_unique<VdDataType>(std::forward<Args>(args)...)); }
+
+    void clear()
+    { m_data.clear(); m_total_versions = 0; }
 private:
     template <class Container>
     void push_back_cont(Container && cont)
@@ -154,6 +92,15 @@ private:
 private:
     std::vector<VdDataPtr> m_data;
     uint m_total_versions = 0;
+};
+
+
+struct Replayable
+{
+    const ReplayData & replay_data() const noexcept
+    { return m_replay_data; }
+protected:
+    ReplayData m_replay_data;
 };
 
 }

@@ -2,6 +2,7 @@
 
 #include "Function.h"
 #include "Misc.h"
+#include "methods/MinSearcher.h"
 
 #include <cstdint>
 #include <functional>
@@ -16,9 +17,12 @@ struct UserInteractor
 
 private:
     using FuncRef = std::reference_wrapper<const Function>;
+    using MethodRef = std::reference_wrapper<MinSearcher>;
 
     const std::vector<Function> m_available_funcs;
-    FuncRef m_current;
+    std::vector<MinSearcher *> m_available_searchers;
+    FuncRef m_current_func;
+    MethodRef m_current_method;
 };
 
 }
