@@ -53,4 +53,17 @@ template <class RefFrom, class RefTo>
 decltype(auto) to_same_ref_as(RefTo && casted, RefFrom &&) // First is one, to which we want to assign new type, so it's RefTo
 { return static_cast<to_same_ref_as_t<RefFrom, RefTo>>(casted); }
 
+template <class... Funcs>
+struct Overloaded : public Funcs...
+{
+    using Funcs::operator() ...;
+
+    template <class... Fs>
+    Overloaded(Fs && ... fs)
+        : Funcs(std::forward<Fs>(fs))...
+    {}
+};
+
+template <class... Funcs>
+Overloaded(Funcs && ...) -> Overloaded<std::decay_t<Funcs>...>;
 }

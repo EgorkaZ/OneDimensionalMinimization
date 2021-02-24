@@ -18,9 +18,15 @@ public:
     /*
      * Calculate function's value in point x
      */ 
-    double operator () (double x) const;
+    double operator () (double x) const
+    { return m_calculate(x); }
 
-    const std::string & to_string() const noexcept;
+    Bounds bounds() const noexcept
+    { return m_bounds; }
+
+    const std::string & to_string() const noexcept
+    { return m_as_string; }
+
     friend std::ostream & operator << (std::ostream & out, const Function & func);
 
 private:
