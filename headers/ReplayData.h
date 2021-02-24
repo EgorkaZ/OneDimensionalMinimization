@@ -66,6 +66,10 @@ struct VdFunction : VersionedData
     VdDataKind get_kind() const noexcept override
     { return VdDataKind::VdFunctionKind; }
 
+    double operator () (double x) const noexcept
+    { return m_func(x); }
+
+private:
     CalculateFunc m_func;
 };
 
