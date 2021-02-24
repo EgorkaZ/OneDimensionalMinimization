@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 #include <type_traits>
 
 namespace min1d {
@@ -25,5 +26,31 @@ struct is_container_of : std::integral_constant<bool, std::is_same_v<typename Co
 {};
 template <class Container, class T>
 inline constexpr bool is_container_of_v = is_container_of<Container, T>::value;
+
+template <class T>
+struct is_unique_ptr : std::false_type
+{};
+template <class T>
+struct is_unique_ptr<std::unique_ptr<T>> : std::true_type
+{};
+template <class T>
+static constexpr bool is_unique_ptr_v = is_unique_ptr<T>::value;
+
+namespace detail {
+template <class RefFrom, class RefTo> // RefFrom - ref, from which we get ref category, RefTo - to which we want to assign it
+struct to_same_ref_as_t_impl
+{
+    using Refless = std::remove_reference_t<RefTo>; // here we save 'const', btw, so 'const T &&' is possible
+    using type = std::conditional_t<std::is_rvalue_reference_v<RefFrom>, Refless &&, Refless &>;
+};
+
+}
+
+template <class RefFrom, class RefTo>
+using to_same_ref_as_t = typename detail::to_same_ref_as_t_impl<RefFrom, RefTo>::type;
+
+template <class RefFrom, class RefTo>
+decltype(auto) to_same_ref_as(RefTo && casted, RefFrom &&) // First is one, to which we want to assign new type, so it's RefTo
+{ return static_cast<to_same_ref_as_t<RefFrom, RefTo>>(casted); }
 
 }
