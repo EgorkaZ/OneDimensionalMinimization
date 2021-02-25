@@ -18,7 +18,7 @@ double Dichotomy::any_find_min() noexcept // TODO: more optimized implementation
 
     uint iter_num = 0;
     double left, right, f_left, f_right, mid;
-    for (mid = (bnds.from + bnds.to) / 2; (bnds.to - bnds.from) > m_eps; mid = (bnds.from + bnds.to) / 2) {
+    for (mid = (bnds.from + bnds.to) / 2; bnds.length() > m_eps; mid = (bnds.from + bnds.to) / 2) {
 
         left = mid - m_sigma;
         right = mid + m_sigma;
