@@ -12,7 +12,7 @@ namespace min1d {
 
     /*
      * This realisation gives inaccurate result.
-     * (see Vasilyev "Metody optimizacii")
+     * (see Vasilyev "Metody optimizacii", page 18-19)
      */ 
     template <bool is_tracked>
     double Golden::any_find_min() noexcept 
@@ -21,12 +21,12 @@ namespace min1d {
         auto bnds = fn.bounds();
         uint iter_num = 0;
 
-        double x_left = bnds.from + PHI_L * (bnds.to - bnds.from);
-        double x_right = bnds.from + PHI_R * (bnds.to - bnds.from);
+        double x_left = bnds.from + PHI_L * bnds.length();
+        double x_right = bnds.from + PHI_R * bnds.length();
 
         double f_left = fn(x_left);
         double f_right = fn(x_right);
-        while ((bnds.to - bnds.from) / 2 > m_eps)
+        while (bnds.length() / 2 > m_eps)
         {
             if constexpr (is_tracked) 
             {
@@ -40,7 +40,7 @@ namespace min1d {
                 bnds.from = x_left;
                 x_left = x_right;
                 f_left = f_right;
-                x_right = bnds.to - PHI_R * (bnds.to - bnds.from);
+                x_right = bnds.to - PHI_R * bnds.length();
                 f_right = fn(x_right);
 
                 if constexpr (is_tracked)
@@ -51,7 +51,7 @@ namespace min1d {
                 bnds.to = x_right;
                 x_right = x_left;
                 f_right = f_left;
-                x_left = bnds.to - PHI_R * (bnds.to - bnds.from);
+                x_left = bnds.to - PHI_R * bnds.length();
                 f_left = fn(x_left);
 
                 if constexpr (is_tracked)

@@ -14,6 +14,7 @@ struct UserInteractor
 {
     UserInteractor ();
     int run();
+    static constexpr double EPS = 0.000001;
 
 private:
     using FuncRef = std::reference_wrapper<const Function>;

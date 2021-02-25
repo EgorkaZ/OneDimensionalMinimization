@@ -8,7 +8,13 @@ namespace min1d {
 
 struct Function
 {
-    struct Bounds { double from, to; };
+    struct Bounds 
+    { 
+        double from, to; 
+
+        double length() noexcept
+        { return to - from; }
+    };
 
 public:
     Function (std::string as_string, CalculateFunc calculate, Bounds bounds);
