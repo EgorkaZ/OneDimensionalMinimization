@@ -74,7 +74,7 @@ int UserInteractor::run()
             println((end - start).count(), "ns have passed");
         } else if (in == "search_traced") {
             const auto & replay_data = m_current_method.get().find_min_tracked(m_current_func);
-            auto callback = Overloaded(
+            auto callback = overload(
                 [](const VdComment & comm) { println(comm.version(), ": '", comm.comment, "'"); },
                 [](const VdPoint & point) { println(point.version(), ": {x: ", point.x, "; y: ", point.y, "}"); },
                 [](const VdSegment & segment) { println(segment.version(), ": [", segment.l, "; ", segment.r, "]"); },

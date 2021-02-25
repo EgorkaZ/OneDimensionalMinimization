@@ -94,13 +94,4 @@ private:
     uint m_total_versions = 0;
 };
 
-
-struct Replayable
-{
-    const ReplayData & replay_data() const noexcept
-    { return m_replay_data; }
-protected:
-    ReplayData m_replay_data;
-};
-
 }

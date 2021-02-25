@@ -65,5 +65,6 @@ struct Overloaded : public Funcs...
 };
 
 template <class... Funcs>
-Overloaded(Funcs && ...) -> Overloaded<std::decay_t<Funcs>...>;
+auto overload(Funcs && ... funcs)
+{ return Overloaded<std::decay_t<Funcs>...>(std::forward<Funcs>(funcs)...); }
 }
