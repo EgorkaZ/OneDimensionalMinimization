@@ -1,6 +1,7 @@
 #include "UserInteractor.h"
 #include "VersionedData.h"
 #include "methods/Dichotomy.h"
+#include "methods/Golden.h"
 
 #include <chrono>
 #include <cmath>
@@ -26,7 +27,8 @@ UserInteractor::UserInteractor()
             {"f(x) = 10x ln(x) - (x ^ 2) / 2", [](double x) { return 10 * x * std::log(x) - x * x / 2; }, {0.1, 2.5}}
             })
     , m_available_searchers({
-        new Dichotomy(0.0000001, 0.000001)
+        new Dichotomy(0.0000001, 0.000001),
+        new Golden(0.000001)
     })
     , m_current_func(m_available_funcs.front())
     , m_current_method(*m_available_searchers.front())
@@ -56,7 +58,7 @@ int UserInteractor::run()
             std::cout << "you chose: " << m_current_func << '\n';
         } else if (in == "methods") {
             for (uint i = 0; i < m_available_searchers.size(); ++i) {
-                std::cout << i << m_available_searchers[i]->method_name() << '\n';
+                std::cout << i << ") " << m_available_searchers[i]->method_name() << '\n';
             }
             std::cout << "choose (wisely): ";
             uint chosen;
