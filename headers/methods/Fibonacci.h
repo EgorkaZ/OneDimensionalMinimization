@@ -9,12 +9,11 @@ namespace min1d {
 struct Fibonacci : public MinSearcher
 {
     Fibonacci(double eps)
-        :m_eps(eps)
+        : m_eps(eps)
     {}
 
-    std::string_view method_name() const noexcept override
-    { return "Fibonacci"; }
-    
+    std::string_view method_name() const noexcept override { return "Fibonacci"; }
+
 protected:
     double find_min_impl() noexcept override;
     double find_min_tracked_impl() noexcept override;
@@ -26,4 +25,4 @@ private:
     double m_eps;
 };
 
-}
+} // namespace min1d
