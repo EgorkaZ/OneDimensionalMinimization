@@ -11,13 +11,13 @@ struct Function
     struct Bounds { double from, to; };
 
 public:
-    Function (std::string as_string, CalculateFunc calculate, Bounds bounds);
+    Function(std::string as_string, CalculateFunc calculate, Bounds bounds);
 
     void reset(std::string as_string, CalculateFunc calculate);
 
     /*
      * Calculate function's value in point x
-     */ 
+     */
     double operator () (double x) const
     { return m_calculate(x); }
 

@@ -29,7 +29,7 @@ struct VersionedData
     template <class Func>
     auto call_func(Func && func) const
     {
-        #define M(type) case VdDataKind::type ## Kind: return func(reinterpret_cast<const type &>(*this))
+#define M(type) case VdDataKind::type ## Kind: return func(reinterpret_cast<const type &>(*this))
 
         switch (get_kind()) {
             M(VdPoint);
@@ -39,7 +39,7 @@ struct VersionedData
             default: assert(false && "There is no such VersionedData kind");
         }
 
-        #undef M
+#undef M
     }
 
     uint version() const noexcept

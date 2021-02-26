@@ -17,7 +17,7 @@ private:
     template <class Container>
     using ContValType = typename std::decay_t<Container>::value_type;
 
-    
+
 
     template <class T>
     static constexpr bool IsVersionedData = std::is_base_of_v<VersionedData, T>;
@@ -32,11 +32,11 @@ public:
 
     template <class Container>
     auto push_back(Container && cont) -> std::enable_if_t<
-                                            is_container_v<std::decay_t<Container>> &&
-                                            IsVersionedData<ContValType<Container>>>
+        is_container_v<std::decay_t<Container>> &&
+        IsVersionedData<ContValType<Container>>>
     {
         if constexpr (std::is_rvalue_reference_v<Container &&>) {
-            push_back_cont(Container{std::move(cont)}); // this way 'cont' will get moved from and thus cleared
+            push_back_cont(Container{ std::move(cont) }); // this way 'cont' will get moved from and thus cleared
         } else {
             push_back_cont(std::forward<Container>(cont));
         }
@@ -44,12 +44,12 @@ public:
 
     template <class Container>
     auto push_back(Container && cont) -> std::enable_if_t<
-                                            is_container_v<std::decay_t<Container>> &&
-                                            is_unique_ptr_v<ContValType<Container>> &&
-                                            IsVersionedData<typename ContValType<Container>::element_type>>
+        is_container_v<std::decay_t<Container>> &&
+        is_unique_ptr_v<ContValType<Container>> &&
+        IsVersionedData<typename ContValType<Container>::element_type>>
     {
         static_assert(std::is_rvalue_reference_v<Container &&>, "Container of unique_ptr's should be moved");
-        push_back_cont(Container{std::move(cont)}); // this way 'cont' will get moved from and thus cleared
+        push_back_cont(Container{ std::move(cont) }); // this way 'cont' will get moved from and thus cleared
     }
 
     template <class VdData>

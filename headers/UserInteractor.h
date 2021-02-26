@@ -12,7 +12,7 @@ namespace min1d {
 
 struct UserInteractor
 {
-    UserInteractor ();
+    UserInteractor();
     int run();
 
 private:

@@ -24,10 +24,10 @@ UserInteractor::UserInteractor()
             {"f(x) = x ^ 2", [](double x) { return x * x; }, {-1., 1.}},
             {"f(x) = sin(x)", [](double x) { return std::sin(x); }, {3.14, 6.28}},
             {"f(x) = 10x ln(x) - (x ^ 2) / 2", [](double x) { return 10 * x * std::log(x) - x * x / 2; }, {0.1, 2.5}}
-            })
+        })
     , m_available_searchers({
         new Dichotomy(0.0000001, 0.000001)
-    })
+        })
     , m_current_func(m_available_funcs.front())
     , m_current_method(*m_available_searchers.front())
 {}
