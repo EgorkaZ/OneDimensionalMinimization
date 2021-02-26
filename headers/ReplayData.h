@@ -17,23 +17,21 @@ private:
     template <class Container>
     using ContValType = typename std::decay_t<Container>::value_type;
 
-    
 
     template <class T>
     static constexpr bool IsVersionedData = std::is_base_of_v<VersionedData, T>;
+
 public:
     using VdDataPtr = std::unique_ptr<const VersionedData>;
     using iterator = std::vector<VdDataPtr>::const_iterator;
 
-    iterator begin() const
-    { return m_data.begin(); }
-    iterator end() const
-    { return m_data.end(); }
+    iterator begin() const { return m_data.begin(); }
+    iterator end() const { return m_data.end(); }
 
     template <class Container>
     auto push_back(Container && cont) -> std::enable_if_t<
-                                            is_container_v<std::decay_t<Container>> &&
-                                            IsVersionedData<ContValType<Container>>>
+            is_container_v<std::decay_t<Container>> &&
+            IsVersionedData<ContValType<Container>>>
     {
         if constexpr (std::is_rvalue_reference_v<Container &&>) {
             push_back_cont(Container{std::move(cont)}); // this way 'cont' will get moved from and thus cleared
@@ -44,9 +42,9 @@ public:
 
     template <class Container>
     auto push_back(Container && cont) -> std::enable_if_t<
-                                            is_container_v<std::decay_t<Container>> &&
-                                            is_unique_ptr_v<ContValType<Container>> &&
-                                            IsVersionedData<typename ContValType<Container>::element_type>>
+            is_container_v<std::decay_t<Container>> &&
+            is_unique_ptr_v<ContValType<Container>> &&
+            IsVersionedData<typename ContValType<Container>::element_type>>
     {
         static_assert(std::is_rvalue_reference_v<Container &&>, "Container of unique_ptr's should be moved");
         push_back_cont(Container{std::move(cont)}); // this way 'cont' will get moved from and thus cleared
@@ -63,11 +61,14 @@ public:
 
 
     template <class VdDataType, class... Args>
-    void emplace_back(Args && ... args)
-    { m_data.emplace_back(std::make_unique<VdDataType>(std::forward<Args>(args)...)); }
+    void emplace_back(Args &&... args) { m_data.emplace_back(std::make_unique<VdDataType>(std::forward<Args>(args)...)); }
 
     void clear()
-    { m_data.clear(); m_total_versions = 0; }
+    {
+        m_data.clear();
+        m_total_versions = 0;
+    }
+
 private:
     template <class Container>
     void push_back_cont(Container && cont)
@@ -94,4 +95,4 @@ private:
     uint m_total_versions = 0;
 };
 
-}
+} // namespace min1d

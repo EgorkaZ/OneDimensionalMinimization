@@ -1,14 +1,13 @@
 #include "methods/Dichotomy.h"
+
 #include "ReplayData.h"
 #include "VersionedData.h"
 
 namespace min1d {
 
-double Dichotomy::find_min_impl() noexcept /*override*/
-{ return any_find_min<false>(); }
+double Dichotomy::find_min_impl() noexcept /*override*/ { return any_find_min<false>(); }
 
-double Dichotomy::find_min_tracked_impl() noexcept /*override*/
-{ return any_find_min<true>(); }
+double Dichotomy::find_min_tracked_impl() noexcept /*override*/ { return any_find_min<true>(); }
 
 template <bool is_tracked>
 double Dichotomy::any_find_min() noexcept // TODO: more optimized implementation for non-tracked implementation
@@ -52,4 +51,4 @@ double Dichotomy::any_find_min() noexcept // TODO: more optimized implementation
     return mid;
 }
 
-}
+} // namespace min1d

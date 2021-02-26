@@ -9,7 +9,10 @@ namespace min1d {
 
 enum struct VdDataKind
 {
-    VdPointKind, VdFunctionKind, VdSegmentKind, VdCommentKind,
+    VdPointKind,
+    VdFunctionKind,
+    VdSegmentKind,
+    VdCommentKind,
 };
 
 struct VdPoint;
@@ -29,21 +32,22 @@ struct VersionedData
     template <class Func>
     auto call_func(Func && func) const
     {
-        #define M(type) case VdDataKind::type ## Kind: return func(reinterpret_cast<const type &>(*this))
+#define M(type) \
+    case VdDataKind::type##Kind: return func(reinterpret_cast<const type &>(*this))
 
         switch (get_kind()) {
             M(VdPoint);
             M(VdFunction);
             M(VdSegment);
             M(VdComment);
-            default: assert(false && "There is no such VersionedData kind");
+        default: assert(false && "There is no such VersionedData kind");
         }
 
-        #undef M
+#undef M
     }
 
-    uint version() const noexcept
-    { return m_version; }
+    uint version() const noexcept { return m_version; }
+
 protected:
     uint m_version;
 };
@@ -57,8 +61,7 @@ struct VdPoint : VersionedData
         , y(y)
     {}
 
-    VdDataKind get_kind() const noexcept override
-    { return VdDataKind::VdPointKind; }
+    VdDataKind get_kind() const noexcept override { return VdDataKind::VdPointKind; }
 
     double x, y;
 };
@@ -70,11 +73,9 @@ struct VdFunction : VersionedData
         , m_func(std::move(func))
     {}
 
-    VdDataKind get_kind() const noexcept override
-    { return VdDataKind::VdFunctionKind; }
+    VdDataKind get_kind() const noexcept override { return VdDataKind::VdFunctionKind; }
 
-    double operator () (double x) const noexcept
-    { return m_func(x); }
+    double operator()(double x) const noexcept { return m_func(x); }
 
 private:
     CalculateFunc m_func;
@@ -88,8 +89,7 @@ struct VdSegment : VersionedData
         , r(r)
     {}
 
-    VdDataKind get_kind() const noexcept override
-    { return VdDataKind::VdSegmentKind; }
+    VdDataKind get_kind() const noexcept override { return VdDataKind::VdSegmentKind; }
 
     double l, r;
 };
@@ -101,10 +101,9 @@ struct VdComment : VersionedData
         , comment(std::move(comment))
     {}
 
-    VdDataKind get_kind() const noexcept override
-    { return VdDataKind::VdCommentKind; }
+    VdDataKind get_kind() const noexcept override { return VdDataKind::VdCommentKind; }
 
     std::string comment;
 };
 
-}
+} // namespace min1d

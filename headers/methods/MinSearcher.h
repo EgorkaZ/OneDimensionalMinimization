@@ -2,6 +2,7 @@
 
 #include "Function.h"
 #include "ReplayData.h"
+
 #include <ostream>
 #include <string_view>
 
@@ -24,11 +25,9 @@ struct MinSearcher
         return m_replay_data;
     }
 
-    const ReplayData & replay_data() const noexcept
-    { return m_replay_data; }
+    const ReplayData & replay_data() const noexcept { return m_replay_data; }
 
-    const Function & last_func() const noexcept
-    { return *m_last_func; }
+    const Function & last_func() const noexcept { return *m_last_func; }
 
 public:
     virtual std::string_view method_name() const noexcept = 0;
@@ -42,4 +41,4 @@ protected:
     std::optional<Function> m_last_func;
 };
 
-}
+} // namespace min1d

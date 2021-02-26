@@ -13,8 +13,7 @@ struct Dichotomy : public MinSearcher
         , m_eps(eps)
     {}
 
-    std::string_view method_name() const noexcept override
-    { return "Dichotomy"; }
+    std::string_view method_name() const noexcept override { return "Dichotomy"; }
 
 protected:
     double find_min_impl() noexcept override;
@@ -29,4 +28,4 @@ private:
     double m_eps;
 };
 
-}
+} // namespace min1d

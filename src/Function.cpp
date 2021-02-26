@@ -17,7 +17,9 @@ void Function::reset(std::string as_string, CalculateFunc calculate)
 }
 
 
-std::ostream & operator << (std::ostream & out, const Function & func)
-{ return out << func.to_string() << " [" << func.m_bounds.from << ", " << func.m_bounds.to << ']'; }
-
+std::ostream & operator<<(std::ostream & out, const Function & func)
+{
+    return out << func.to_string() << " [" << func.m_bounds.from << ", " << func.m_bounds.to << ']';
 }
+
+} // namespace min1d
