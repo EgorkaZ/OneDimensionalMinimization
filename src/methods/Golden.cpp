@@ -40,7 +40,7 @@ namespace min1d {
                 bnds.from = x_left;
                 x_left = x_right;
                 f_left = f_right;
-                x_right = bnds.to - PHI_R * bnds.length();
+                x_right = bnds.from + PHI_R * bnds.length();
                 f_right = fn(x_right);
 
                 if constexpr (is_tracked)
