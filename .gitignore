@@ -1,2 +1,8 @@
-build
-.cache
+**
+!.gitignore
+!headers
+!headers/**
+!src
+!src/**
+!do_build.sh
+!CMakeLists.txt
