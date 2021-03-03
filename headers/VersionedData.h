@@ -52,7 +52,6 @@ protected:
     uint m_version;
 };
 
-// Do we really need this?
 struct VdPoint : VersionedData
 {
     VdPoint(uint version, double x, double y)

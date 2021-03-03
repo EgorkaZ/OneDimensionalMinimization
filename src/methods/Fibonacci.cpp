@@ -18,7 +18,7 @@ double Fibonacci::any_find_min() noexcept
     auto bnds = fn.bounds();
 
     const double limit = bnds.length() / m_eps;
-    std::vector<long long int> fib = {1, 1};
+    std::vector<double> fib = {1, 1}; //double to avoid casts in future
     uint n = fib.size();
     while (fib.back() < limit) {
         fib.emplace_back(fib[n - 1] + fib[n - 2]);
@@ -33,8 +33,8 @@ double Fibonacci::any_find_min() noexcept
         m_replay_data.emplace_back<VdComment>(0, comment);
     }
 
-    double x_left = bnds.from + static_cast<double>(fib[n - 2]) / fib[n] * bnds.length();
-    double x_right = bnds.from + static_cast<double>(fib[n - 1]) / fib[n] * bnds.length();
+    double x_left = bnds.from + fib[n - 2] / fib[n] * bnds.length();
+    double x_right = bnds.from + fib[n - 1] / fib[n] * bnds.length();
     double f_left = fn(x_left);
     double f_right = fn(x_right);
 

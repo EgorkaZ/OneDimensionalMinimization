@@ -4,6 +4,7 @@
 #include "methods/Dichotomy.h"
 #include "methods/Fibonacci.h"
 #include "methods/Golden.h"
+#include "methods/Parabole.h"
 
 #include <chrono>
 #include <cmath>
@@ -27,7 +28,8 @@ UserInteractor::UserInteractor()
                          {"f(x) = 10x ln(x) - (x ^ 2) / 2", [](double x) { return 10 * x * std::log(x) - x * x / 2; }, {0.1, 2.5}}})
     , m_available_searchers({new Dichotomy(0.0000001, EPS),
                              new Golden(EPS),
-                             new Fibonacci(EPS)})
+                             new Fibonacci(EPS),
+                             new Parabole(EPS)})
     , m_current_func(m_available_funcs.front())
     , m_current_method(*m_available_searchers.front())
 {}
