@@ -77,7 +77,7 @@ double Parabole::any_find_min() noexcept
         }
 
         if (iter_num) {
-            exit_delta = abs(new_x - prev_x);
+            exit_delta = std::abs(new_x - prev_x);
         }
         prev_x = new_x;
         iter_num++;

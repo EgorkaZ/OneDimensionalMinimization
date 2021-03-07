@@ -5,6 +5,7 @@
 #include "methods/Fibonacci.h"
 #include "methods/Golden.h"
 #include "methods/Parabole.h"
+#include "methods/Brent.h"
 
 #include <chrono>
 #include <cmath>
@@ -29,7 +30,8 @@ UserInteractor::UserInteractor()
     , m_available_searchers({new Dichotomy(0.0000001, EPS),
                              new Golden(EPS),
                              new Fibonacci(EPS),
-                             new Parabole(EPS)})
+                             new Parabole(EPS),
+                             new Brent(EPS)})
     , m_current_func(m_available_funcs.front())
     , m_current_method(*m_available_searchers.front())
 {}
