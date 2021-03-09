@@ -1,11 +1,11 @@
 #include "UserInteractor.h"
 
 #include "VersionedData.h"
+#include "methods/Brent.h"
 #include "methods/Dichotomy.h"
 #include "methods/Fibonacci.h"
 #include "methods/Golden.h"
 #include "methods/Parabole.h"
-#include "methods/Brent.h"
 
 #include <chrono>
 #include <cmath>
@@ -27,7 +27,7 @@ UserInteractor::UserInteractor()
                          {"f(x) = x ^ 2", [](double x) { return x * x; }, {-1., 1.}},
                          {"f(x) = sin(x)", [](double x) { return std::sin(x); }, {3.14, 6.28}},
                          {"f(x) = 10x ln(x) - (x ^ 2) / 2", [](double x) { return 10 * x * std::log(x) - x * x / 2; }, {0.1, 2.5}}})
-    , m_available_searchers({new Dichotomy(0.0000001, EPS),
+    , m_available_searchers({new Dichotomy(EPS / 100, EPS),
                              new Golden(EPS),
                              new Fibonacci(EPS),
                              new Parabole(EPS),

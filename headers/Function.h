@@ -13,6 +13,8 @@ struct Function
         double from, to;
 
         double length() noexcept { return to - from; }
+
+        double middle() noexcept { return (from + to) / 2; }
     };
 
 public:

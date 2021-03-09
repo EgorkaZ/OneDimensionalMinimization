@@ -15,14 +15,20 @@ struct Fibonacci : public MinSearcher
     std::string_view method_name() const noexcept override { return "Fibonacci"; }
 
 protected:
+    /*
+      * Find unimodal function's minimum
+      * using fibonacci method.
+      */
     double find_min_impl() noexcept override;
+
+    /*
+     * Find unimodal function's minimum
+     * using fibonacci method.
+     * Outputs tracing information.
+     */
     double find_min_tracked_impl() noexcept override;
 
-private:
-    template <bool is_tracked>
-    double any_find_min() noexcept;
-
-    double m_eps;
+    double m_eps; // required accuracy
 };
 
 } // namespace min1d
