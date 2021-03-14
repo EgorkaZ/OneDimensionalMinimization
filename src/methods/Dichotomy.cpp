@@ -1,5 +1,4 @@
 #include "methods/Dichotomy.h"
-
 #include "ReplayData.h"
 #include "VersionedData.h"
 

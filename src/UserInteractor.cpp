@@ -1,4 +1,6 @@
 #include "UserInteractor.h"
+#include "VersionedData.h"
+#include "methods/Dichotomy.h"
 
 #include "VersionedData.h"
 #include "methods/Brent.h"

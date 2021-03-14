@@ -58,10 +58,10 @@ decltype(auto) to_same_ref_as(RefTo && casted, RefFrom &&) { return static_cast<
 template <class... Funcs>
 struct Overloaded : public Funcs...
 {
-    using Funcs::operator()...;
+    using Funcs::operator() ...;
 
     template <class... Fs>
-    Overloaded(Fs &&... fs)
+    Overloaded(Fs && ... fs)
         : Funcs(std::forward<Fs>(fs))...
     {}
 };
