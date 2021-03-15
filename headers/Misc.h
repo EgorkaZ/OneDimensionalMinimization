@@ -44,14 +44,16 @@ struct to_same_ref_as_t_impl
     using type = std::conditional_t<std::is_rvalue_reference_v<RefFrom>, Refless &&, Refless &>;
 };
 
-}
+} // namespace detail
 
 template <class RefFrom, class RefTo>
 using to_same_ref_as_t = typename detail::to_same_ref_as_t_impl<RefFrom, RefTo>::type;
 
+/*
+ * First is one, to which we want to assign new type, so it's RefTo
+ */
 template <class RefFrom, class RefTo>
-decltype(auto) to_same_ref_as(RefTo && casted, RefFrom &&) // First is one, to which we want to assign new type, so it's RefTo
-{ return static_cast<to_same_ref_as_t<RefFrom, RefTo>>(casted); }
+decltype(auto) to_same_ref_as(RefTo && casted, RefFrom &&) { return static_cast<to_same_ref_as_t<RefFrom, RefTo>>(casted); }
 
 template <class... Funcs>
 struct Overloaded : public Funcs...
@@ -65,6 +67,5 @@ struct Overloaded : public Funcs...
 };
 
 template <class... Funcs>
-auto overload(Funcs && ... funcs)
-{ return Overloaded<std::decay_t<Funcs>...>(std::forward<Funcs>(funcs)...); }
-}
+auto overload(Funcs &&... funcs) { return Overloaded<std::decay_t<Funcs>...>(std::forward<Funcs>(funcs)...); }
+} // namespace min1d

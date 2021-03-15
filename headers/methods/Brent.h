@@ -4,34 +4,36 @@
 #include "MinSearcher.h"
 #include "ReplayData.h"
 
+#include <cmath>
+
 namespace min1d {
 
-struct Dichotomy : public MinSearcher
+struct Brent : public MinSearcher
 {
-    Dichotomy(double sigma, double eps)
-        : m_sigma(sigma)
-        , m_eps(eps)
+    static inline const double TAU = (3 - sqrt(5)) / 2; // coefficient as in gloden ratio
+
+    Brent(double eps)
+        : m_eps(eps)
     {}
 
-    std::string_view method_name() const noexcept override { return "Dichotomy"; }
+
+    std::string_view method_name() const noexcept override { return "Brent"; }
 
 protected:
     /*
      * Find unimodal function's minimum
-     * using dichotomy method.
+     * using Brent's method.
      */
     double find_min_impl() noexcept override;
 
     /*
      * Find unimodal function's minimum
-     * using dichotomy method.
+     * using Brent's method.
      * Outputs tracing information.
      */
     double find_min_tracked_impl() noexcept override;
 
-private:
-    double m_sigma; // method's parameter
-    double m_eps;   // required accuracy
+    double m_eps; // required accuracy
 };
 
 } // namespace min1d
