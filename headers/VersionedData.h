@@ -10,13 +10,13 @@ namespace min1d {
 enum struct VdDataKind
 {
     VdPointKind,
-    VdFunctionKind,
+    VdParaboleKind,
     VdSegmentKind,
     VdCommentKind,
 };
 
 struct VdPoint;
-struct VdFunction;
+struct VdParabole;
 struct VdSegment;
 struct VdComment;
 
@@ -37,7 +37,7 @@ struct VersionedData
 
         switch (get_kind()) {
             M(VdPoint);
-            M(VdFunction);
+            M(VdParabole);
             M(VdSegment);
             M(VdComment);
         default: assert(false && "There is no such VersionedData kind");
@@ -65,19 +65,18 @@ struct VdPoint : VersionedData
     double x, y;
 };
 
-struct VdFunction : VersionedData
+struct VdParabole : VersionedData
 {
-    VdFunction(uint version, CalculateFunc func)
+    VdParabole(uint version, double a, double b, double c)
         : VersionedData(version)
-        , m_func(std::move(func))
+        , a(a)
+        , b(b)
+        , c(c)
     {}
 
-    VdDataKind get_kind() const noexcept override { return VdDataKind::VdFunctionKind; }
+    VdDataKind get_kind() const noexcept override { return VdDataKind::VdParaboleKind; }
 
-    double operator()(double x) const noexcept { return m_func(x); }
-
-private:
-    CalculateFunc m_func;
+    double a, b, c;
 };
 
 struct VdSegment : VersionedData

@@ -68,4 +68,22 @@ struct Overloaded : public Funcs...
 
 template <class... Funcs>
 auto overload(Funcs &&... funcs) { return Overloaded<std::decay_t<Funcs>...>(std::forward<Funcs>(funcs)...); }
+
+template <class... Types>
+struct TypeList;
+
+namespace detail {
+
+template <template <class... DestTypes> class Getter, class List>
+struct FromTypeListImpl;
+
+template <template <class... DestTypes> class Getter, class... SrcTypes>
+struct FromTypeListImpl<Getter, TypeList<SrcTypes...>>
+{
+    using type = Getter<SrcTypes...>;
+};
+}
+
+template <template <class... DestTypes> class Getter, class List>
+using FromTypeList = typename detail::FromTypeListImpl<Getter, List>::type;
 } // namespace min1d

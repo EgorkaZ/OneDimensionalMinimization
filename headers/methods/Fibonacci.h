@@ -14,6 +14,8 @@ struct Fibonacci : public MinSearcher
 
     std::string_view method_name() const noexcept override { return "Fibonacci"; }
 
+    void change_parameters(double new_eps) noexcept { m_eps = new_eps; }
+
 protected:
     /*
       * Find unimodal function's minimum

@@ -193,9 +193,7 @@ double Brent::find_min_tracked_impl() noexcept /*override*/
             u = (x + w - a1 / a2) / 2;
 
             m_replay_data.emplace_back<VdComment>(iter_num, "The parabole and its minimum are:");
-            m_replay_data.emplace_back<VdFunction>(iter_num, [=](double arg) {
-                return a0 + a1 * (arg - x) + a2 * (arg - x) * (arg - w);
-            });
+            m_replay_data.emplace_back<VdParabole>(iter_num, a2, a1 - a2 * w - a2 * x, a0 - a1 * x + a2 * w * x);
             m_replay_data.emplace_back<VdPoint>(iter_num, u, fn(u));
 
             if (bnds.from + m_eps <= u && u <= bnds.to - m_eps && std::abs(u - x) < prev_prev_step / 2) {

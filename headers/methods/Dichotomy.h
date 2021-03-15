@@ -15,6 +15,8 @@ struct Dichotomy : public MinSearcher
 
     std::string_view method_name() const noexcept override { return "Dichotomy"; }
 
+    void change_parameters(double new_eps, double new_sigma) noexcept { m_eps = new_eps; m_sigma = new_sigma; }
+
 protected:
     /*
      * Find unimodal function's minimum
