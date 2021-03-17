@@ -21,6 +21,12 @@ struct UserInteractor
     UserInteractor();
     int run();
 
+    void set_method(int method_id);
+    void set_func(Function new_func);
+    void set_eps(double new_eps);
+    double search_min();
+    const ReplayData& search_traced();
+
 private:
     using FuncRef = std::reference_wrapper<const Function>;
     using MethodRef = std::reference_wrapper<MinSearcher>;

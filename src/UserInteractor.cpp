@@ -10,6 +10,7 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <fstream>
 #include <memory>
 #include <string>
 #include <variant>
@@ -58,6 +59,50 @@ UserInteractor::UserInteractor()
     , m_current_func(m_available_funcs.front())
 {}
 
+void UserInteractor::set_method(int new_method) {
+    if (new_method < std::variant_size_v<MethodVariant>) {
+        #define M(num) case num: m_current_method.emplace<num>(m_eps); break
+        switch (new_method) {
+            M(0);
+            M(2);
+            M(3);
+            M(4);
+        case 1:
+            m_current_method.emplace<1>(m_eps, m_eps / 10.);
+            break;
+        }
+        #undef M
+    }
+
+}
+
+void UserInteractor::set_func(Function new_func) {
+    m_current_func = new_func;
+}
+
+void UserInteractor::set_eps(double new_eps) {
+    m_eps = new_eps;
+    std::visit(overload(
+        [new_eps](Dichotomy & dichotomy) {
+            double new_sigma = new_eps / 10.;
+            dichotomy.change_parameters(new_eps, new_sigma);
+        },
+        [new_eps](auto & method) {
+            method.change_parameters(new_eps);
+        }
+    ), m_current_method);
+}
+
+double UserInteractor::search_min() {
+    return std::visit([this](auto & method) -> double { return method.find_min(m_current_func); }, m_current_method);
+}
+
+const ReplayData& UserInteractor::search_traced() {
+    return std::visit([this](auto & method) -> const ReplayData & {
+        return method.find_min_tracked(m_current_func);
+    }, m_current_method);
+}
+
 int UserInteractor::run()
 {
     println("Usage:");
@@ -67,6 +112,7 @@ int UserInteractor::run()
     println("enter 'search_traced' to search for min and print tracked data");
     println("enter 'search_table' to search for min and print tracked data in table format");
     println("enter 'change_eps' to change epsilon");
+    println("enter 'research' to compare methods and different epsilons on the function.");
     println("enter 'q' to exit");
 
     std::cout << std::setprecision(std::numeric_limits<double>::digits10 + 1);
@@ -80,7 +126,7 @@ int UserInteractor::run()
             uint chosen;
             std::cin >> chosen;
             if (chosen < m_available_funcs.size()) {
-                m_current_func = m_available_funcs[chosen];
+                set_func(m_available_funcs[chosen]);
             }
             std::cout << "you chose: " << m_current_func << '\n';
         } else if (in == "methods") {
@@ -92,33 +138,18 @@ int UserInteractor::run()
             std::cout << "choose (wisely): ";
             uint chosen;
             std::cin >> chosen;
-            if (chosen < std::variant_size_v<MethodVariant>) {
-#define M(num) case num: m_current_method.emplace<num>(m_eps); break
-                switch (chosen) {
-                    M(0);
-                    M(2);
-                    M(3);
-                    M(4);
-                case 1:
-                    m_current_method.emplace<1>(m_eps, m_eps / 10.);
-                    break;
-                }
-            }
-
+            set_method(chosen);
             std::visit([](auto & method) { std::cout << "chosen " << method.method_name() << '\n'; }, m_current_method);
         } else if (in == "search") {
-            double res;
             auto start = chrono::steady_clock::now();
-            std::visit([&res, this](auto &  method) { res = method.find_min(m_current_func); }, m_current_method);
+            double res = search_min();
             auto end = chrono::steady_clock::now();
 
             println("x = ", res);
             println((end - start).count(), "ns have passed");
             println(method_last_func().call_count(), "function calls");
         } else if (in == "search_traced") {
-            const auto & replay_data = std::visit([this](auto & method) -> const ReplayData & {
-                return method.find_min_tracked(m_current_func);
-            }, m_current_method);
+            const auto & replay_data = search_traced();
 
             std::cout << "found\n";
 
@@ -155,6 +186,50 @@ int UserInteractor::run()
                     method.change_parameters(new_eps);
                 }
             ), m_current_method);
+        } else if (in == "research") {
+            std::ofstream out("research.csv");
+            double standard_eps = m_eps;
+            for(int method = 0; method < std::variant_size_v<MethodVariant>; method++) {
+                set_method(method);
+                set_eps(standard_eps);
+                std::string method_name = std::visit([](auto & method) -> std::string { return (std::string)method.method_name(); }, m_current_method);
+                {
+                    out << "Function log for " << method_name << std::endl;
+                    uint prev_version = 0;
+                    auto callback = overload(
+                        [&out](const VdComment & comm)  { out << "\tc\t" << comm.comment; },
+                        [&out](const VdPoint & point)  { out << "\tp\t" << point.x << '\t' << point.y; },
+                        [&out](const VdSegment & segment)  { out << "\ts\t" << segment.l << '\t' << segment.r; },
+                        [&out](const VdParabole & parabole)  { out << "\tf\t" << parabole.a << '\t' << parabole.b << '\t' << parabole.c; },
+                        [&out](const auto & other)  { out << "\terrtype:" << static_cast<int>(other.get_kind()); });
+                    constexpr auto get_version = [](const auto & other) -> uint { return other.version(); };
+                    const auto& replay_data = search_traced();
+                    out << 0;
+                    std::for_each(replay_data.begin(), replay_data.end(), [&](auto & ptr) {
+                        uint ver = ptr->call_func(get_version);
+                        if(ver != prev_version) {
+                            out << std::endl << ver;
+                            prev_version = ver;
+                        }
+                        ptr->call_func(callback);
+                    });
+                    out << std::endl << "Epsilon:\t" << m_eps << "\tCall count:\t" << method_last_func().call_count() << std::endl;
+                }
+                {
+                    out << "Epsilon comparison for " << method_name << std::endl << "eps\tns\tcalls" << std::endl;
+                    double eps = 1;
+                    for(int i = 0; i < 16; i++) {
+                        set_eps(eps /= 10);
+                        out << m_eps << '\t';
+                        auto start = chrono::steady_clock::now();
+                        double res = search_min();
+                        auto end = chrono::steady_clock::now();
+                        out << (end - start).count() << '\t';
+                        out << method_last_func().call_count() << std::endl;
+                    }
+                    out << std::endl;
+                }
+            }
         } else if (in == "q") {
             break;
         }
