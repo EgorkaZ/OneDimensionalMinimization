@@ -188,6 +188,7 @@ int UserInteractor::run()
             ), m_current_method);
         } else if (in == "research") {
             std::ofstream out("research.csv");
+            std::cout << std::fixed << std::setprecision(std::numeric_limits<double>::digits10 + 1);
             double standard_eps = m_eps;
             for(int method = 0; method < std::variant_size_v<MethodVariant>; method++) {
                 set_method(method);
@@ -197,11 +198,11 @@ int UserInteractor::run()
                     out << "Function log for " << method_name << std::endl;
                     uint prev_version = 0;
                     auto callback = overload(
-                        [&out](const VdComment & comm)  { out << "\tc\t" << comm.comment; },
-                        [&out](const VdPoint & point)  { out << "\tp\t" << point.x << '\t' << point.y; },
-                        [&out](const VdSegment & segment)  { out << "\ts\t" << segment.l << '\t' << segment.r; },
-                        [&out](const VdParabole & parabole)  { out << "\tf\t" << parabole.a << '\t' << parabole.b << '\t' << parabole.c; },
-                        [&out](const auto & other)  { out << "\terrtype:" << static_cast<int>(other.get_kind()); });
+                        [&out](const VdComment & comm)  { out << ",c," << comm.comment; },
+                        [&out](const VdPoint & point)  { out << ",p," << point.x << ',' << point.y; },
+                        [&out](const VdSegment & segment)  { out << ",s," << segment.l << ',' << segment.r; },
+                        [&out](const VdParabole & parabole)  { out << ",f," << parabole.a << ',' << parabole.b << ',' << parabole.c; },
+                        [&out](const auto & other)  { out << ",errtype:" << static_cast<int>(other.get_kind()); });
                     constexpr auto get_version = [](const auto & other) -> uint { return other.version(); };
                     const auto& replay_data = search_traced();
                     out << 0;
@@ -213,18 +214,18 @@ int UserInteractor::run()
                         }
                         ptr->call_func(callback);
                     });
-                    out << std::endl << "Epsilon:\t" << m_eps << "\tCall count:\t" << method_last_func().call_count() << std::endl;
+                    out << std::endl << "Epsilon:," << m_eps << ",Call count:," << method_last_func().call_count() << std::endl;
                 }
                 {
-                    out << "Epsilon comparison for " << method_name << std::endl << "eps\tns\tcalls" << std::endl;
+                    out << "Epsilon comparison for " << method_name << std::endl << "eps,ns,calls" << std::endl;
                     double eps = 1;
                     for(int i = 0; i < 16; i++) {
                         set_eps(eps /= 10);
-                        out << m_eps << '\t';
+                        out << m_eps << ',';
                         auto start = chrono::steady_clock::now();
                         double res = search_min();
                         auto end = chrono::steady_clock::now();
-                        out << (end - start).count() << '\t';
+                        out << (end - start).count() << ',';
                         out << method_last_func().call_count() << std::endl;
                     }
                     out << std::endl;
