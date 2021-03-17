@@ -114,6 +114,7 @@ int UserInteractor::run()
 
             println("x = ", res);
             println((end - start).count(), "ns have passed");
+            println(method_last_func().call_count(), "function calls");
         } else if (in == "search_traced") {
             const auto & replay_data = std::visit([this](auto & method) -> const ReplayData & {
                 return method.find_min_tracked(m_current_func);
@@ -128,12 +129,14 @@ int UserInteractor::run()
                     [](const VdParabole & parabole) { println(parabole.version(), ": a=", parabole.a, ", b=", parabole.b, ", c=", parabole.c); },
                     [](const auto & other) { println(other.version(), ": not implemented kind: ", static_cast<int>(other.get_kind())); });
             std::for_each(replay_data.begin(), replay_data.end(), [&callback](auto & ptr) { ptr->call_func(callback); });
+            println(method_last_func().call_count(), "function calls");
         } else if (in == "search_table") {
             const auto & replay_data = std::visit([this](auto & method) -> const ReplayData & {
                 return method.find_min_tracked(m_current_func);
             }, m_current_method);
 
             print_replay_data_table(replay_data);
+            println(method_last_func().call_count(), "function calls");
         } else if (in == "change_eps") {
             std::cout << "enter new eps: ";
             double new_eps;

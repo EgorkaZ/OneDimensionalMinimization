@@ -27,6 +27,10 @@ private:
     using Methods = TypeList<Brent, Dichotomy, Fibonacci, Golden, Parabole>;
     using MethodVariant = FromTypeList<std::variant, Methods>;
 
+    const Function & method_last_func() const noexcept {
+        return std::visit([](auto & method) -> const Function & { return method.last_func(); }, m_current_method);
+    }
+
     double m_eps = 0.000001;
 
     const std::vector<Function> m_available_funcs;
