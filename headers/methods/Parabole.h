@@ -11,10 +11,9 @@ struct Parabole : public MinSearcher
         : m_eps(eps)
     {}
 
-    std::string_view method_name() const noexcept override
-    {
-        return "Parabole";
-    }
+    std::string_view method_name() const noexcept override { return "Parabole"; }
+
+    void change_parameters(double new_eps) noexcept { m_eps = new_eps; }
 
 protected:
     /*

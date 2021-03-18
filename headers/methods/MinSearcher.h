@@ -15,12 +15,14 @@ struct MinSearcher
     double find_min(Function func)
     {
         m_last_func.emplace(std::move(func));
+        m_last_func.reset();
         return find_min_impl();
     }
     const ReplayData & find_min_tracked(Function func)
     {
         m_last_func.emplace(std::move(func));
         m_replay_data.clear();
+        m_last_func.reset();
         find_min_tracked_impl();
         return m_replay_data;
     }

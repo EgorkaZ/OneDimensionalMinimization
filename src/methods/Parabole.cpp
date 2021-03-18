@@ -152,9 +152,7 @@ double Parabole::find_min_tracked_impl() noexcept /*override*/
         double new_f = fn(new_x);
 
         m_replay_data.emplace_back<VdComment>(iter_num, "The parabole and its minimum are:");
-        m_replay_data.emplace_back<VdFunction>(iter_num, [=](double x) {
-            return a0 + a1 * (x - x1) + a2 * (x - x1) * (x - x2);
-        });
+        m_replay_data.emplace_back<VdParabole>(iter_num, a2, a1 - a2 * x1 - a2 * x2, a0 - a1 * x1 + a2 * x1 * x2);
         m_replay_data.emplace_back<VdPoint>(iter_num, new_x, new_f);
 
         if (new_x < x2) {
@@ -180,8 +178,6 @@ double Parabole::find_min_tracked_impl() noexcept /*override*/
         }
 
         prev_x = new_x;
-        iter_num++;
-        ;
     }
 
     m_replay_data.emplace_back<VdComment>(iter_num, "Answer is");
