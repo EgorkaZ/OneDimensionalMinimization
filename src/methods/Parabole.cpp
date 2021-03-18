@@ -178,8 +178,6 @@ double Parabole::find_min_tracked_impl() noexcept /*override*/
         }
 
         prev_x = new_x;
-        iter_num++;
-        ;
     }
 
     m_replay_data.emplace_back<VdComment>(iter_num, "Answer is");

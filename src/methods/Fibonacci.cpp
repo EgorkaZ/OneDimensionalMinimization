@@ -3,6 +3,7 @@
 #include "ReplayData.h"
 #include "VersionedData.h"
 
+#include <sstream>
 #include <vector>
 
 namespace min1d {
@@ -81,11 +82,9 @@ double Fibonacci::find_min_tracked_impl() noexcept /*override*/
     }
     n--; // so that fib[n] is valid
 
-    std::string comment = "The limit is ";
-    comment += std::to_string(limit);
-    comment += "; the biggest fibonacci number is ";
-    comment += std::to_string(fib.back());
-    m_replay_data.emplace_back<VdComment>(0, comment);
+    std::ostringstream comment;
+    comment << "The limit is " << limit << "; the biggest fibonacci number is " << fib.back();
+    m_replay_data.emplace_back<VdComment>(0, std::move(comment).str());
 
 
     double x_left = bnds.from + fib[n - 2] / fib[n] * bnds.length();

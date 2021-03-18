@@ -55,7 +55,7 @@ void print_replay_data_table(const ReplayData & data)
 
 UserInteractor::UserInteractor()
     : m_available_funcs({{"f(x) = 10x ln(x) - (x ^ 2) / 2", [](double x) { return 10 * x * std::log(x) - x * x / 2; }, {0.1, 2.5}}})
-    , m_current_method(std::in_place_type<Dichotomy>, m_eps / 10., m_eps)
+    , m_current_method(std::in_place_index<0>, m_eps)
     , m_current_func(m_available_funcs.front())
 {}
 
@@ -68,7 +68,7 @@ void UserInteractor::set_method(int new_method) {
             M(3);
             M(4);
         case 1:
-            m_current_method.emplace<1>(m_eps, m_eps / 10.);
+            m_current_method.emplace<1>(m_eps / 10., m_eps);
             break;
         }
         #undef M
@@ -76,7 +76,7 @@ void UserInteractor::set_method(int new_method) {
 
 }
 
-void UserInteractor::set_func(Function new_func) {
+void UserInteractor::set_func(const Function & new_func) {
     m_current_func = new_func;
 }
 
@@ -147,7 +147,7 @@ int UserInteractor::run()
 
             println("x = ", res);
             println((end - start).count(), "ns have passed");
-            println(method_last_func().call_count(), "function calls");
+            println(method_last_func().call_count(), " function calls");
         } else if (in == "search_traced") {
             const auto & replay_data = search_traced();
 
@@ -160,14 +160,10 @@ int UserInteractor::run()
                     [](const VdParabole & parabole) { println(parabole.version(), ": a=", parabole.a, ", b=", parabole.b, ", c=", parabole.c); },
                     [](const auto & other) { println(other.version(), ": not implemented kind: ", static_cast<int>(other.get_kind())); });
             std::for_each(replay_data.begin(), replay_data.end(), [&callback](auto & ptr) { ptr->call_func(callback); });
-            println(method_last_func().call_count(), "function calls");
         } else if (in == "search_table") {
-            const auto & replay_data = std::visit([this](auto & method) -> const ReplayData & {
-                return method.find_min_tracked(m_current_func);
-            }, m_current_method);
+            const auto & replay_data = search_traced();
 
             print_replay_data_table(replay_data);
-            println(method_last_func().call_count(), "function calls");
         } else if (in == "change_eps") {
             std::cout << "enter new eps: ";
             double new_eps;
@@ -188,7 +184,7 @@ int UserInteractor::run()
             ), m_current_method);
         } else if (in == "research") {
             std::ofstream out("research.csv");
-            std::cout << std::fixed << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+            out << std::fixed << std::setprecision(std::numeric_limits<double>::digits10 + 1);
             double standard_eps = m_eps;
             for(int method = 0; method < std::variant_size_v<MethodVariant>; method++) {
                 set_method(method);

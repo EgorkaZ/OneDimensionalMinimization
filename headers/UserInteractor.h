@@ -22,7 +22,7 @@ struct UserInteractor
     int run();
 
     void set_method(int method_id);
-    void set_func(Function new_func);
+    void set_func(const Function & new_func);
     void set_eps(double new_eps);
     double search_min();
     const ReplayData& search_traced();
